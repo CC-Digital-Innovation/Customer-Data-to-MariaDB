@@ -1,0 +1,7 @@
+loguru
+mariadb
+pysnow
+python-dotenv
+python-magic
+pytz
+requests

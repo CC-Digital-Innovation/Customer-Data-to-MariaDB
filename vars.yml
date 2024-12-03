@@ -1,0 +1,7 @@
+repo: https://github.com/CC-Digital-Innovation/Customer-Data-to-MariaDB
+ssh_url: git@github.com:CC-Digital-Innovation/Customer-Data-to-MariaDB.git
+branch: main
+project_root: src
+image: customer-data-to-mariadb
+manifest_path: customer_data_to_mariadb-cronjob.yml
+pipeline: customer-data-to-mariadb

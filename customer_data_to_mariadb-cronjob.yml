@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: customer-data-to-mariadb
+  namespace: default
+spec:
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            vault.hashicorp.com/agent-inject: 'true'
+            vault.hashicorp.com/role: 'customer_data_to_mariadb'
+            vault.hashicorp.com/agent-inject-secret-opsgenie-cust_maria: 'secret/opsgenie/cust_maria'
+            vault.hashicorp.com/agent-inject-template-opsgenie-cust_maria: |
+              {{- with secret "secret/opsgenie/cust_maria" -}}
+                export OPSGENIE_API_KEY="{{ .Data.data.api_key }}"
+              {{- end }}
+            vault.hashicorp.com/agent-inject-secret-servicenow: 'secret/servicenow'
+            vault.hashicorp.com/agent-inject-template-servicenow: |
+              {{- with secret "secret/servicenow" -}}
+                export SERVICENOW_INSTANCE_NAME="{{ .Data.data.instance_name }}"
+                export SERVICENOW_USERNAME="{{ .Data.data.anthony_username }}"
+                export SERVICENOW_PASSWORD="{{ .Data.data.anthony_password }}"
+              {{- end }}
+            vault.hashicorp.com/agent-inject-secret-mariadb: 'secret/mariadb'
+            vault.hashicorp.com/agent-inject-template-mariadb: |
+              {{- with secret "secret/mariadb" -}}
+                export MARIADB_IP_ADDRESS="{{ .Data.data.ip_address }}"
+              {{- end }}
+            vault.hashicorp.com/agent-inject-secret-mariadb-cust_maria: 'secret/mariadb/cust_maria'
+            vault.hashicorp.com/agent-inject-template-mariadb-cust_maria: |
+              {{- with secret "secret/mariadb/cust_maria" -}}
+                export MARIADB_DATABASE_NAME="{{ .Data.data.database_name }}"
+                export MARIADB_USERNAME="{{ .Data.data.username }}"
+                export MARIADB_PASSWORD="{{ .Data.data.password }}"
+              {{- end }}
+            vault.hashicorp.com/ca-cert: /run/secrets/kubernetes.io/serviceaccount/ca.crt
+        spec:
+          containers:
+            - image: harbor.k3s.quokka.ninja/library/customer-data-to-mariadb:0.0.0
+              name: customer-data-to-mariadb
+              args: ['/bin/bash', '-c', 'source /vault/secrets/opsgenie-cust_maria && source /vault/secrets/servicenow && source /vault/secrets/mariadb && source /vault/secrets/mariadb-cust_maria && python ./src/customer_data_to_mariadb.py']
+          restartPolicy: Never
+          serviceAccountName: customer-data-to-mariadb
+      backoffLimit: 3
+  schedule: 0 6 * * *
