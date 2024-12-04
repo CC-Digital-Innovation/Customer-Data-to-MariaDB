@@ -619,7 +619,7 @@ def insert_servicenow_tickets_into_mariadb(mariadb_connection: MariaDBConnection
                     logger.error(f'{e}')
                     logger.error(f'Object: {servicenow_ticket}')
         
-        logger.info(F'Inserted {MARIADB_EXECUTE_MANY_LIMIT} ServiceNow tickets into MariaDB!')
+        logger.info(f'Inserted {len(servicenow_ticket_batch)} ServiceNow tickets into MariaDB!')
         
     # Return how many rows were inserted.
     return total_rows_inserted
@@ -750,7 +750,7 @@ def get_needed_opsgenie_updates_for_mariadb(mariadb_connection: MariaDBConnectio
                     f"WHERE id = '{opsgenie_alert_id}'"
                 )
                 mariadb_connection.commit()
-                total_deletions += mariadb_cursor.rowcount
+                total_deletions += 1
             except mariadb.Error as e:
                 logger.error(f'{e}')
                 logger.error(f'id: {opsgenie_alert_id}')
@@ -994,7 +994,7 @@ def get_needed_servicenow_updates_for_mariadb(mariadb_connection: MariaDBConnect
                     f"WHERE sys_id = '{servicenow_ticket_id}'"
                 )
                 mariadb_connection.commit()
-                total_deletions += mariadb_cursor.rowcount
+                total_deletions += 1
             except mariadb.Error as e:
                 logger.error(f'{e}')
                 logger.error(f'sys_id: {servicenow_ticket_id}')
