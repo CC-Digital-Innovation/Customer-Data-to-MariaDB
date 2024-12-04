@@ -38,7 +38,7 @@ spec:
             vault.hashicorp.com/ca-cert: /run/secrets/kubernetes.io/serviceaccount/ca.crt
         spec:
           containers:
-            - image: harbor.k3s.quokka.ninja/library/customer-data-to-mariadb:0.0.1
+            - image: harbor.k3s.quokka.ninja/library/customer-data-to-mariadb:0.0.3
               name: customer-data-to-mariadb
               args: ['/bin/bash', '-c', 'source /vault/secrets/opsgenie-cust_maria && source /vault/secrets/servicenow && source /vault/secrets/mariadb && source /vault/secrets/mariadb-cust_maria && python ./src/customer_data_to_mariadb.py']
           restartPolicy: Never
