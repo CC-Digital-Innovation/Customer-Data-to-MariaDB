@@ -36,6 +36,7 @@ spec:
                 export MARIADB_PASSWORD="{{ .Data.data.password }}"
               {{- end }}
             vault.hashicorp.com/ca-cert: /run/secrets/kubernetes.io/serviceaccount/ca.crt
+            vault.hashicorp.com/agent-pre-populate-only: 'true'
         spec:
           containers:
             - image: harbor.k3s.quokka.ninja/library/customer-data-to-mariadb:0.0.3
