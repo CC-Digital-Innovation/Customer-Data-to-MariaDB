@@ -24,7 +24,7 @@ MARIADB_IP_ADDRESS = os.getenv('MARIADB_IP_ADDRESS')
 MARIADB_DATABASE_NAME = os.getenv('MARIADB_DATABASE_NAME')
 MARIADB_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 MARIADB_EXECUTE_MANY_LIMIT = 1000
-MARIADB_OPSGENIE_TABLE_NAME = 'Global_Opsgenie_Alerts_Dev'
+MARIADB_OPSGENIE_TABLE_NAME = 'opsgenie_alerts'
 MARIADB_OPSGENIE_TABLE_COLUMNS = [
     'acknowledged', 'alias', 'count', 'created_at', 'integration_id',
     'integration_name', 'integration_type', 'is_seen', 'last_occurred_at',
@@ -35,7 +35,7 @@ MARIADB_OPSGENIE_TABLE_COLUMNS = [
 ]
 MARIADB_OPSGENIE_INSERT_PLACEHOLDERS = ', '.join(['?' for _ in MARIADB_OPSGENIE_TABLE_COLUMNS])
 MARIADB_OPSGENIE_UPDATE_PLACEHOLDERS = ' = ?, '.join(MARIADB_OPSGENIE_TABLE_COLUMNS[:-1])
-MARIADB_SERVICENOW_TABLE_NAME = 'Global_ServiceNow_Tickets_Dev'
+MARIADB_SERVICENOW_TABLE_NAME = 'servicenow_tickets'
 MARIADB_SERVICENOW_TABLE_COLUMNS = [
     'assigned_to', 'assignment_group', 'caller_id', 'catalog_item', 'category',
     'closed_at', 'closed_by', 'cmdb_ci_name', 'company', 'created_at',
