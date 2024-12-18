@@ -45,4 +45,5 @@ spec:
           restartPolicy: Never
           serviceAccountName: customer-data-to-mariadb
       backoffLimit: 3
-  schedule: 0 6 * * *
+  schedule: 0 8 * * *
+  timeZone: US/Eastern
