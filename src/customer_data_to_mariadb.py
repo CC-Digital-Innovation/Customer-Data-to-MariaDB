@@ -37,7 +37,7 @@ MARIADB_OPSGENIE_INSERT_PLACEHOLDERS = ', '.join(['?' for _ in MARIADB_OPSGENIE_
 MARIADB_OPSGENIE_UPDATE_PLACEHOLDERS = ' = ?, '.join(MARIADB_OPSGENIE_TABLE_COLUMNS[:-1])
 MARIADB_SERVICENOW_TABLE_NAME = 'servicenow_tickets'
 MARIADB_SERVICENOW_TABLE_COLUMNS = [
-    'assigned_to', 'assignment_group', 'caller_id', 'catalog_item', 'category',
+    'assigned_to', 'assignment_group', 'caller_id', 'catalog_item', 'category', 'close_state',
     'closed_at', 'closed_by', 'cmdb_ci_name', 'company', 'created_at',
     'location', 'milestone', 'number', 'opened_by', 'priority',
     'request_number', 'requested_for', 'risk', 'severity', 'short_description',
@@ -67,7 +67,7 @@ SERVICENOW_CLIENT = pysnow.Client(
 SERVICENOW_CLIENT.parameters.display_value = 'all'
 SERVICENOW_CLIENT.parameters.exclude_reference_link = True
 SERVICENOW_TICKET_FIELDS = [
-    'assigned_to', 'assignment_group', 'caller_id', 'cat_item', 'category',
+    'assigned_to', 'assignment_group', 'caller_id', 'cat_item', 'category', 'close_code',
     'closed_at', 'closed_by', 'cmdb_ci', 'company', 'sys_created_on', 'location',
     'u_milestone', 'number', 'opened_by', 'priority', 'request', 'requested_for',
     'risk', 'severity', 'short_description', 'u_source_of_level_of_effort',
@@ -419,6 +419,9 @@ def ticket_dict_to_mariadb_tuple(ticket_dict: dict) -> tuple:
         None if ticket_dict.get('category', None) is None or \
                 ticket_dict['category']['display_value'] == '' \
              else ticket_dict['category']['display_value'],
+        None if ticket_dict.get('close_code', None) is None or \
+                ticket_dict['close_code']['display_value'] == '' \
+             else ticket_dict['close_code']['display_value'],
         None if ticket_dict.get('closed_at', None) is None \
              else to_mariadb_datetime(ticket_dict['closed_at']['value'], SERVICENOW_DATETIME_FORMAT),
         None if ticket_dict.get('closed_by', None) is None or \
