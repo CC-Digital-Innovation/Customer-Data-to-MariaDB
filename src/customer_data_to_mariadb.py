@@ -1,21 +1,19 @@
-from datetime import datetime
-from itertools import batched
 import os
 import time
+from datetime import datetime
+from itertools import batched
 
-from dotenv import load_dotenv
-from loguru import logger
+import dotenv
 import mariadb
-from mariadb.connections import Connection as MariaDBConnection
-import mariadb.cursors
 import pysnow
 import pytz
-from pytz import timezone
 import requests
+from loguru import logger
+from mariadb.connections import Connection as MariaDBConnection
 
 
 # ====================== Environment / Global Variables =======================
-load_dotenv(override=True)
+dotenv.load_dotenv(override=True)
 
 # Initialize MariaDB constant global variables.
 MARIADB_USERNAME = os.getenv('MARIADB_USERNAME')
@@ -321,7 +319,7 @@ def mariadb_opsgenie_alerts_table_seeding(mariadb_connection: MariaDBConnection)
         last_alert_datetime = datetime.strptime(opsgenie_alerts_page[-1][OPSGENIE_ALERT_CREATED_AT_INDEX], MARIADB_DATETIME_FORMAT)
         
         # Make the datetime object timezone aware.
-        last_alert_datetime_utc = last_alert_datetime.replace(tzinfo=timezone('UTC'))
+        last_alert_datetime_utc = last_alert_datetime.replace(tzinfo=pytz.timezone('UTC'))
         
         # Convert the datetime object into a UTC timestamp.
         last_alert_timestamp = int(last_alert_datetime_utc.timestamp() * 1000)
@@ -873,7 +871,7 @@ def get_all_latest_opsgenie_alerts(mariadb_connection: MariaDBConnection) -> lis
     latest_alert_datetime = mariadb_cursor.fetchone()[0]
     
     # Extract the timestamp from the alert.
-    latest_alert_timestamp = int(latest_alert_datetime.replace(tzinfo=timezone('UTC')).timestamp() * 1000)
+    latest_alert_timestamp = int(latest_alert_datetime.replace(tzinfo=pytz.timezone('UTC')).timestamp() * 1000)
     
     # Get the first batch of Opsgenie alerts.
     opsgenie_alerts_query = f'createdAt > {latest_alert_timestamp}'
@@ -889,7 +887,7 @@ def get_all_latest_opsgenie_alerts(mariadb_connection: MariaDBConnection) -> lis
         most_recent_alert_datetime = datetime.strptime(opsgenie_alerts[0][OPSGENIE_ALERT_CREATED_AT_INDEX], MARIADB_DATETIME_FORMAT)
         
         # Make the datetime object timezone aware.
-        most_recent_alert_datetime_utc = most_recent_alert_datetime.replace(tzinfo=timezone('UTC'))
+        most_recent_alert_datetime_utc = most_recent_alert_datetime.replace(tzinfo=pytz.timezone('UTC'))
         
         # Convert the datetime object into a UTC timestamp.
         most_recent_alert_timestamp = int(most_recent_alert_datetime_utc.timestamp() * 1000)
@@ -1179,8 +1177,8 @@ def get_all_latest_servicenow_tickets_of_type(mariadb_connection: MariaDBConnect
     
     # Extract the ticket's created_at datetime and convert it to the US/Eastern timezone.
     latest_ticket_datetime_utc = pytz.utc.localize(latest_ticket_datetime)
-    latest_ticket_datetime_est = latest_ticket_datetime_utc.astimezone(timezone('US/Eastern'))
-    latest_ticket_datetime_est = timezone('US/Eastern').normalize(latest_ticket_datetime_est)
+    latest_ticket_datetime_est = latest_ticket_datetime_utc.astimezone(pytz.timezone('US/Eastern'))
+    latest_ticket_datetime_est = pytz.timezone('US/Eastern').normalize(latest_ticket_datetime_est)
     
     # Get a reference to the ServiceNow table and make the query to the table.
     servicenow_table = SERVICENOW_CLIENT.resource(api_path=f'/table/{servicenow_ticket_type}')
